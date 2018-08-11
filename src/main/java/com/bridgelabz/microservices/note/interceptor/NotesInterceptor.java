@@ -16,12 +16,16 @@ public class NotesInterceptor implements HandlerInterceptor {
 	Token jwtToken;
 		 
 	@Override
-	public boolean preHandle(HttpServletRequest request,HttpServletResponse response,Object object) {
-		
-		String token=request.getHeader("Authorization");
-		if(!token.isEmpty()) {
-		request.setAttribute("userId",jwtToken.parseJwtToken(token));
+	public boolean preHandle(HttpServletRequest request,
+			HttpServletResponse response, Object object) throws Exception {
+		String token = request.getHeader("token");
+		System.out.println("token "+token);
+		if(token!=null) {
+		String userId = jwtToken.parseJwtToken(token);
+		System.out.println(userId);			
+			request.setAttribute("userId",jwtToken.parseJwtToken(token));
 			return true;
+			
 		}
 		return false;
 	}
