@@ -125,7 +125,7 @@ public class UserServiceImpl implements UserService {
 			throw new LoginException("Password unmatched");
 		}
 
-		String jwt = jwtToken.tokenGenerator(checkUser.get().getEmail());
+		String jwt = jwtToken.tokenGenerator(checkUser.get().getId());
 		return jwt;
 
 	}
