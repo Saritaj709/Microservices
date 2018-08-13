@@ -27,14 +27,19 @@ public class SimpleFilter extends ZuulFilter {
         System.out.println(" token found "+token);
 		Claims claims = Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(KEY)).parseClaimsJws(token)
 				.getBody();
-		ctx.addZuulRequestHeader("token", claims.getSubject());
-		
+		ctx.addZuulRequestHeader("userId", claims.getSubject());
+		request.setAttribute("userId", claims.getSubject());
+		System.out.println(request.toString());
 		return null;
 	}
 
 	@Override
 	public boolean shouldFilter() {
-		
+		RequestContext ctx = RequestContext.getCurrentContext();
+		HttpServletRequest request = ctx.getRequest();
+		if(request.getRequestURI().startsWith("/notes/")) {
+		return true;
+		}
 		return false;
 	}
 
