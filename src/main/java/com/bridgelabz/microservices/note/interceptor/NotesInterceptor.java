@@ -1,4 +1,4 @@
-package com.bridgelabz.microservices.note.interceptor;
+/*package com.bridgelabz.microservices.note.interceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,7 +23,7 @@ public class NotesInterceptor implements HandlerInterceptor {
 		if(token!=null) {
 		String userId = jwtToken.parseJwtToken(token);
 		System.out.println(userId);			
-			request.setAttribute("userId",jwtToken.parseJwtToken(token));
+			request.setAttribute("userId",userId);
 			return true;
 			
 		}
@@ -31,3 +31,4 @@ public class NotesInterceptor implements HandlerInterceptor {
 	}
 	
 }
+*/

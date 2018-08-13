@@ -117,14 +117,16 @@ public class NoteServiceImpl implements NoteService {
 			}
 		}
 		
+		if(createDto.getDescription().startsWith("http://")||createDto.getDescription().startsWith("https://")) {
 		UrlValidator validateUrl=new UrlValidator();
-		if(createDto.getUrl()!=null) {
-			if(validateUrl.isValid(createDto.getUrl()));
+			if(validateUrl.isValid(createDto.getDescription()));
 		
-		List<UrlMetaData> metaData=addContent(createDto.getUrl());
+		List<UrlMetaData> metaData=addContent(createDto.getDescription());
 		note.setMetaData(metaData);
 		}
-		
+		List<String> descriptionList=new ArrayList<>();
+		descriptionList.add(createDto.getDescription());
+		note.setDescription(descriptionList);
 		noteRepository.save(note);
         
 		noteElasticRepository.save(note);
@@ -164,44 +166,15 @@ public class NoteServiceImpl implements NoteService {
 				.attr(environment.getProperty("CONTENT"));
 		Elements images = doc.select(environment.getProperty("IMAGES"));
 		UrlMetaData metaData = new UrlMetaData();
-		// String img= doc.select("img").first().attr("src");
 		metaData.setUrl(url);
 		metaData.setKeywords(keywords);
 		metaData.setDescription(description);
-		// metaData.setImageUrl(img);
 		for (Element image : images) {
-			// metaData.setImageUrl(image.attr("src"));
 			metaData.setImageUrl(image.absUrl("src"));
 		}
 		urlList.add(metaData);
 		return urlList;
-	}
-
-	/*public List<UrlMetaData> addContent(List<String> url) throws NoteNotFoundException, UnAuthorizedException, MalFormedException {
-		
-		List<UrlMetaData> urlList=new ArrayList<>();
-		urlList.addAll(addContent(url));
-		
-		UrlValidator validateUrl=new UrlValidator();
-		url.stream().filter(urlStream->validateUrl.isValid(urlStream)).forEach(filterStream->{ 
-			try {
-				addContent(filterStream);
-			} catch (NoteNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (UnAuthorizedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (MalFormedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-		});
-		  
-       return urlList;
-	}*/
-	
+	}	
 	
 	/**
 	 * @param userId
@@ -228,16 +201,24 @@ public class NoteServiceImpl implements NoteService {
         List<UrlMetaData> listMetaData=new ArrayList<>();
 
 		listMetaData = note.getMetaData();
-
-		if (listMetaData!= null) {
-
-			for (int i = 0; i < listMetaData.size(); i++) {
-
-				if (listMetaData.get(i).getUrl().equals(url)) {
+		
+		List<String> descriptionList=new ArrayList<>();
+       if(listMetaData!=null) {
+		
+    	  if(descriptionList!=null) {
+    		  
+    		  descriptionList=note.getDescription();
+	        for(int i=0;i<descriptionList.size();i++) {
+		
+				if (note.getDescription().get(i).equals(url)) {
 					throw new UrlAdditionException(environment.getProperty("UrlAdditionException"));
 				}
 			}
-			
+	        
+	        descriptionList.add(url);
+	       List<String> desList=descriptionList;
+			note.setDescription(desList);
+    	  }
 			List<UrlMetaData> data=addContent(url);
 			
 			listMetaData.addAll(data);
